@@ -1,0 +1,18 @@
+#this is my first workflow file
+#give me comments on what it does
+name: CI Pipeline # This is the name of the workflow, which will appear in the GitHub Actions tab
+on:               # This section defines the events that will trigger the workflow
+  push:           # The workflow will run on push events to any branch
+    branches:     # This section specifies the branches that will trigger the workflow
+      - "*"       # The workflow will run on the main branch and any other branches
+  pull_request:   # The workflow will also run on pull request events to any branch
+    branches:       # This section specifies the branches that will trigger the workflow
+      - "*"        # The workflow will run on pull requests to the main branch and any other branches
+jobs:          # This section defines the jobs that will be run as part of the workflow
+  first-job:  # This is the identifier for the job
+    runs-on: ubuntu-latest   # This specifies the type of virtual machine to run the job on
+    steps:           # This section defines the steps that will be executed as part of the job
+      - name: Checkout code          # This step checks out the repository code so that it can be used in subsequent steps
+        uses: actions/checkout@v2    # This uses the official GitHub Action for checking out code from the repository 
+      - name: Run a one-line script  # This step runs a simple shell command
+        run: echo "Hello, World!"    # This command prints "Hello, World!" to the console
