@@ -1,0 +1,28 @@
+#This github actions workflow file is used to run jobs on different operating systems like ubuntu, windows and macos for testing purposes with version specific details like 15 and 20 for ubuntu, 2019 and 2022 for windows and 10.15 and 11 for macos
+name: OS Versions Testing Workflow
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*" 
+jobs:
+  os-version-job:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-15.04, ubuntu-20.04, windows-2019, windows-2022, macos-10.15, macos-11]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Display OS Version
+        run: |
+          echo "Running on OS: ${{ matrix.os }}"
+          if [[ "${{ matrix.os }}" == ubuntu* ]]; then
+            lsb_release -a
+          elif [[ "${{ matrix.os }}" == windows* ]]; then
+            systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+          elif [[ "${{ matrix.os }}" == macos* ]]; then
+            sw_vers
+          fi
