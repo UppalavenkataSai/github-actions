@@ -1,4 +1,3 @@
-
 #this is im . github workflow file for variable example local and env variable
 name: Variable Example Workflow
 on: workflow_dispatch   # This allows the workflow to be triggered manually from the GitHub Actions tab
@@ -32,3 +31,8 @@ jobs:
           STEP_ENV_VAR: "This is a step-level environment variable"
         run: |
           echo "Step-level Environment Variable: $STEP_ENV_VAR"
+      - name: Access step-level environment variable in run
+        env:
+          GITHUBVAR: "Accessing step-level variable in run"    
+        run: |
+          echo "Step-level Environment Variable: $GITHUBVAR" # GITHUBVAR is used to access the step level environment variable defined above
