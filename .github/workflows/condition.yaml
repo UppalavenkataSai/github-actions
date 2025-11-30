@@ -1,0 +1,24 @@
+# This workflow runs conditionally based on the event type with if conditionals
+name: Conditional Workflow
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  conditional-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run on push events
+        if: github.event_name == 'push'  # This step runs only if the event is a push
+        run: echo "This job ran on a push event."
+
+      - name: Run on pull request events
+        if: github.event_name == 'pull_request'  # This step runs only if the event is a pull request
+        run: echo "This job ran on a pull request event."
