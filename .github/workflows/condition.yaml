@@ -1,13 +1,14 @@
-# This workflow runs conditionally based on the event type with if conditionals
+# This workflow runs conditionally based on the event type with if conditionals only run on main branch 
+# in this repository have two branches main and test i want this workflow to run only on main branch in if conditionals for prectice
+
 name: Conditional Workflow
-on:
+on : 
   push:
     branches:
-      - main
+      - "*"       # Trigger on push events to any branch
   pull_request:
     branches:
-      - main
-
+      - "*"       # Trigger on pull request events to any branch
 jobs:
   conditional-job:
     runs-on: ubuntu-latest
@@ -15,10 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run on push events
-        if: github.event_name == 'push'  # This step runs only if the event is a push
-        run: echo "This job ran on a push event."
+      - name: Run on push to main branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "This job ran on a push event to the main branch."
 
-      - name: Run on pull request events
-        if: github.event_name == 'pull_request'  # This step runs only if the event is a pull request
-        run: echo "This job ran on a pull request event."
+      - name: Run on pull request to main branch
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: echo "This job ran on a pull request event to the main branch." 
