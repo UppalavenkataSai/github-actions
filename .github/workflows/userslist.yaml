@@ -15,4 +15,4 @@ on:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}         # Access key ID stored in GitHub Secrets
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret access key stored in GitHub Secrets  
             AWS_DEFAULT_REGION: ap-south-1                               # Specify the AWS region 
-            AWS_DEFAULT_OUTPUT: json                                    # Specify the output format as JSON
+            #AWS_DEFAULT_OUTPUT: json                                    # Specify the output format as JSON
