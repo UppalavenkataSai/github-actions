@@ -1,0 +1,18 @@
+#this github actions to show total users in aws account using aws cli command
+name: Total Users Workflow
+on:
+  workflow_dispatch:   # This allows the workflow to be triggered manually from the GitHub Actions tab
+  jobs:
+    total_users:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+        - name: Run AWS CLI command
+          run: |
+            aws iam list-users --query 'length(Users)'  # This command lists all IAM users and counts them using JMESPath query 
+          env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}         # Access key ID stored in GitHub Secrets
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret access key stored in GitHub Secrets  
+            AWS_DEFAULT_REGION: ap-south-1                               # Specify the AWS region 
+            AWS_DEFAULT_OUTPUT: json                                    # Specify the output format as JSON
