@@ -18,9 +18,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: Launch EC2 Instance
+      - name: Create EC2 Instance
         shell: bash
         run: |
+          cat <<EOF > run.sh
           aws ec2 run-instances \
             --image-id ami-0c02fb55956c7d316 \
             --count 1 \
@@ -28,3 +29,6 @@ jobs:
             --key-name Mumbai-Keypair \
             --security-groups jenkins-server \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=MyEC2Instance}]"
+          EOF
+
+          bash run.sh
