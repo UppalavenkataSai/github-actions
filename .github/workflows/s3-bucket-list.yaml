@@ -1,0 +1,18 @@
+#this gitub workflow file is used to list all the s3 buckets in aws account using aws cli command
+name: S3 Buckets List Workflow  
+on:
+  workflow_dispatch:   # This allows the workflow to be triggered manually from the GitHub Actions tab  
+jobs:
+  s3-buckets-list-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2   # This step checks out the repository code so that it can be used in subsequent steps
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1  # This action configures AWS credentials for use in the workflow
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}       # Access key ID stored in GitHub Secrets
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret access key stored in GitHub Secrets
+          aws-region: ap-south-1                                     # Specify the AWS region
+      - name: List S3 Buckets
+        run: aws s3 ls   # This command lists all S3 buckets in the configured AWS account
