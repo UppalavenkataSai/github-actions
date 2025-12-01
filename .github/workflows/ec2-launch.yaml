@@ -1,0 +1,30 @@
+#this github actions workflow file is used to run to create ec2 instance using aws cli commands
+#image id Amazon Linux 2023 AMI 2023.9.20251117.1 x86_64 HVM kernel-6.1
+#key pair name : Mumbai-Keypair
+#security group : jenkins-server
+#instance type : t3.micro
+#vpc : default vpc
+name: EC2 Instance Creation Workflow
+on:
+  workflow_dispatch:   # This allows the workflow to be triggered manually from the GitHub Actions tab
+jobs:
+  create-ec2-instance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2   # This step checks out the repository code so that it can be used in subsequent steps
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1  # This action configures AWS credentials for use in the workflow
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}       # Access key ID stored in GitHub Secrets
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret access key stored in GitHub Secrets
+          aws-region: ap-south-1                                     # Specify the AWS region
+      - name: Create EC2 Instance
+        run: |
+          aws ec2 run-instances \
+            --image-id ami-0c02fb55956c7d316 \  # Amazon Linux 2023 AMI ID for ap-south-1 region
+            --count 1 \                          # Number of instances to launch
+            --instance-type t3.micro \           # Instance type
+            --key-name Mumbai-Keypair \          # Key pair name for SSH access
+            --security-groups jenkins-server     # Security group name    
+          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyEC2Instance}]'  # Tagging the instance with a name    
