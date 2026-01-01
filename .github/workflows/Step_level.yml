@@ -1,0 +1,15 @@
+#This code is for step level configuration in a CI/CD pipeline in github actions
+name: Step Level Configuration
+on:
+  workflow_dispatch:                      # This workflow can be triggered manually
+jobs:
+  test:
+    runs-on: ubuntu-latest                    # This job will run on the latest version of Ubuntu
+    steps:                                    # Steps to be executed in the job
+      - name: Checkout code                   # Step to checkout the code from the repository
+        uses: actions/checkout@v2             # Using the checkout action version 2
+      - name: Echo Custom Message              # -name is used to give a name to the step
+        run: |
+          NAME="SAI"                               # run is used to execute commands
+          CUSTOM_MESSAGE="Hello from Step Level Configuration!"
+          echo "Hey $NAME $CUSTOM_MESSAGE"
