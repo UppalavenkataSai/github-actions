@@ -41,6 +41,8 @@ ci.yml	Run tests
 build.yml	Build app
 deploy.yml	Deploy app
 lint.yml	Code quality
+
+
 4️⃣ Events (on)
 Definition:
 
@@ -55,6 +57,8 @@ schedule	Cron jobs
 release	Deploy on release
 Example:
 on: push
+
+
 
 5️⃣ Jobs
 Definition:
@@ -71,6 +75,7 @@ Example:
 jobs:
   test:
     runs-on: ubuntu-latest
+
 
 6️⃣ Runners (runs-on)
 Definition:
@@ -89,6 +94,7 @@ self-hosted
 
 Example:
 runs-on: ubuntu-latest
+
 
 7️⃣ Steps
 Definition:
@@ -109,6 +115,7 @@ Example:
 steps:
   - run: echo "Hello"
 
+
 8️⃣ Actions (uses)
 Definition:
 
@@ -122,6 +129,7 @@ actions/setup-python	Setup Python
 actions/upload-artifact	Upload files
 Example:
 - uses: actions/checkout@v4
+
 
 9️⃣ Commands (run)
 Definition:
@@ -139,6 +147,7 @@ Multi-line:
     npm install
     npm test
 
+
 🔟 Environment Variables (env)
 Definition:
 
@@ -154,6 +163,7 @@ Step-level:
 - run: echo $NODE_ENV
   env:
     NODE_ENV: test
+
 
 1️⃣1️⃣ Secrets
 Definition:
@@ -171,6 +181,7 @@ env:
 
 ⚠️ Secrets are never hardcoded.
 
+
 1️⃣2️⃣ Job Dependency (needs)
 Definition:
 
@@ -183,6 +194,7 @@ Deploy only after tests pass
 Example:
 deploy:
   needs: test
+
 
 1️⃣3️⃣ Artifacts
 Definition:
@@ -201,6 +213,7 @@ Example:
     name: build-files
     path: dist/
 
+
 1️⃣4️⃣ Cache
 Definition:
 
@@ -215,6 +228,7 @@ pip cache
 Example:
 - uses: actions/cache@v4
 
+
 1️⃣5️⃣ Conditions (if)
 Definition:
 
@@ -222,6 +236,7 @@ Runs jobs/steps only if condition is true.
 
 Example:
 if: github.ref == 'refs/heads/main'
+
 
 1️⃣6️⃣ Matrix Strategy
 Definition:
@@ -237,6 +252,7 @@ strategy:
   matrix:
     node: [16, 18, 20]
 
+
 1️⃣7️⃣ Real-Time Workflow Flow
 
 Developer pushes code
@@ -246,6 +262,7 @@ ci.yml runs tests
 build.yml builds app
 
 deploy.yml deploys app
+
 
 1️⃣8️⃣ How Many Files Are Really Used?
 Minimum:
@@ -258,6 +275,7 @@ Real companies:
 
 Each file has one responsibility only.
 
+
 1️⃣9️⃣ Common Mistakes
 
 Wrong YAML indentation
@@ -267,6 +285,7 @@ Missing checkout
 Wrong secret name
 
 Wrong branch trigger
+
 
 2️⃣0️⃣ Final Notes (IMPORTANT)
 
