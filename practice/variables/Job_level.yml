@@ -1,0 +1,17 @@
+#This is job level variables configuration in a CI/CD pipeline in github actions
+name: Job Level Configuration
+on:
+  workflow_dispatch:                      # This workflow can be triggered manually
+jobs:
+  build:
+    runs-on: ubuntu-latest                    # This job will run on the latest version of Ubuntu
+    env:                                      # Job level environment variables
+      Job_name: 'Build_Job'
+      Build_version: '1.0.0'
+    steps:                                    # Steps to be executed in the job
+      - name: Checkout code                   # Step to checkout the code from the repository
+        uses: actions/checkout@v2             # Using the checkout action version 2
+      - name: Echo Job Details                 # -name is used to give a name to the step
+        run: |                               # run is used to execute commands
+          echo "Job Name is ${{ env.Job_name }}"
+          echo "Build Version is ${{ env.Build_version }}"
