@@ -10,11 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -27,19 +25,18 @@ jobs:
       - name: Run tests
         run: npm test || echo "No tests configured"
 
-  # 2️⃣ BUILD JOB (creates artifacts)
+  # 2️⃣ BUILD JOB
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Create artifact folder
         run: |
           mkdir -p output
-          cp -r src/* output/      # Copy backend code
-          cp main.html output/     # Copy HTML file
+          cp -r src/* output/
+          cp main.html output/
           echo "Build created at $(date)" >> output/build-info.txt
 
       - name: Upload artifact
@@ -66,5 +63,4 @@ jobs:
           echo "Deploying artifact files..."
           ls -la output/
           cat output/build-info.txt
-          # Here you can add real deployment commands
-          # e.g., scp -i $SERVER_KEY output/* user@server:/var/www/app
+          # Replace with real deployment commands, e.g. scp
