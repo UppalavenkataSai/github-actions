@@ -1,0 +1,17 @@
+#This code is for context variable configuration in a CI/CD pipeline in github actions
+name: Context Variables Configuration
+on:
+  workflow_dispatch:                      # This workflow can be triggered manually
+jobs:
+  info:
+    runs-on: ubuntu-latest                    # This job will run on the latest version of Ubuntu
+    steps:                                    # Steps to be executed in the job
+      - name: Checkout code                   # Step to checkout the code from the repository
+        uses: actions/checkout@v2             # Using the checkout action version 2
+      - name: Echo Context Variables           # -name is used to give a name to the step
+        run: |                               # run is used to execute commands
+          echo "GitHub Repository is ${{ github.repository }}"
+          echo "Workflow Name is ${{ github.workflow }}"
+          echo "Actor is ${{ github.actor }}"
+          echo "Event Name is ${{ github.event_name }}"
+          echo "SHA is ${{ github.sha }}"
