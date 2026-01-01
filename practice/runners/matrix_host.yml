@@ -1,0 +1,15 @@
+#This code is runners matrix configuration file for github actions CI/CD pipeline
+name: Matrix Host Configuration
+on:
+  workflow_dispatch:                      # This workflow can be triggered manually
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}               # This job will run on the OS defined in the matrix
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]  # Defining a matrix of operating systems
+    steps:                                    # Steps to be executed in the job
+      - name: Checkout code                   # Step to checkout the code from the repository
+        uses: actions/checkout@v2             # Using the checkout action version 2
+      - name: Echo Operating System           # -name is used to give a name to the step
+        run: echo "Running on ${{ matrix.os }}" # run is used to execute a command
