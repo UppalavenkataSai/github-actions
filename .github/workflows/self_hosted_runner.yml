@@ -1,0 +1,16 @@
+#This is github actions runners configuration file and it defines self-hosted runners for specific jobs
+name: GitHub Runners Configuration
+on:
+  workflow_dispatch:                      # This workflow can be triggered manually
+jobs:
+  deploy:
+    runs-on: ubuntu-latest                    # This job will run on a self-hosted runner
+    steps:                                    # Steps to be executed in the job
+      - name: Checkout code                   # Step to checkout the code from the repository
+        uses: actions/checkout@v2             # Using the checkout action version 2
+      - name: Echo Runner Info                 # -name is used to give a name to the step
+        run: |                               # run is used to execute commands
+          echo "This job is running on a self-hosted runner."
+          echo "Runner Name is ${{ runner.name }}"
+          echo "Runner OS is ${{ runner.os }}"
+          echo "Runner Architecture is ${{ runner.arch }}"
