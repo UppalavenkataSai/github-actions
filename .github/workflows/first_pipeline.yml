@@ -1,7 +1,8 @@
 
 name: demo pipeline
 
-on: push
+on:
+  push:
 
 jobs:
   first_job:
@@ -15,4 +16,7 @@ jobs:
         run: echo "My First Github Actions job"
 
       - name: List files
-        run: ls
+        run: ls -la
+
+      - name: Read File
+        run: cat README.md
