@@ -1,0 +1,7 @@
+name: new_pipeline
+on: push
+jobs: 
+  pipelinejob:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Enter the your name"
