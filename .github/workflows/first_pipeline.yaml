@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Enter the your name {{ env.APP_ENV}}"
+      - run: echo "Enter the your name {{env.APP_ENV}}"
   dev:
     needs: test
     runs-on: windows-latest
