@@ -3,13 +3,18 @@ name: new_pipeline
 on: push
 
 env:
-  APP_ENV: staging
+  APP_ENV: beta staging
 
 jobs:
   test:
+    env:
+      APP_ENV: dev Staging
+    
     runs-on: ubuntu-latest
     steps:
       - name: Print environment
+        env:
+          APP_ENV: dev Staging
         run: echo "Enter your name ${{ env.APP_ENV }}"
 
   dev:
