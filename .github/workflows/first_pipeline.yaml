@@ -1,15 +1,20 @@
 name: new_pipeline
+
 on: push
-env: 
+
+env:
   APP_ENV: staging
-jobs: 
+
+jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Enter the your name {{env.APP_ENV}}"
+      - name: Print environment
+        run: echo "Enter your name ${{ env.APP_ENV }}"
+
   dev:
     needs: test
     runs-on: windows-latest
     steps:
-      - run: echo "Enter your project name"
-      
+      - name: Print project name
+        run: echo "Enter your project name"
