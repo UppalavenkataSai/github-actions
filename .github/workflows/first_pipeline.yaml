@@ -1,7 +1,12 @@
 name: new_pipeline
 on: push
 jobs: 
-  pipelinejob:
+  test:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Enter the your name"
+  dev:
+    runs-on: windows-latest
+    steps:
+      - run: echo "Enter your project name"
+      
