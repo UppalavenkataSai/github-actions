@@ -1,10 +1,12 @@
 name: new_pipeline
 on: push
+env: 
+  APP_ENV: staging
 jobs: 
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Enter the your name"
+      - run: echo "Enter the your name {{ env.APP_ENV}}"
   dev:
     needs: test
     runs-on: windows-latest
