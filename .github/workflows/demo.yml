@@ -1,0 +1,10 @@
+name: Demo Project
+on: push
+jobs:
+  my_pipeline:
+    runs-on: windows-latest
+    steps:
+      - name: printing first project 
+        run: echo "This is new project"
+      
+  
