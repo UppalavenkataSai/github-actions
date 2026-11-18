@@ -6,9 +6,8 @@ jobs:
     steps:
       - name: checkout repository background
         uses: actions/checkout@v4
-      - name: Python setup
-        uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - name: Setup Python
+        uses: actions/setup-python@v6.1.0
         with:
-          python-version: '3.13' 
+          python-version: '3.13'
       - run: python test_*.py
