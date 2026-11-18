@@ -1,5 +1,6 @@
 import unittest
-from app.calculator import add, subtract
+
+from calculator import add, subtract
 
 
 class CalculatorTests(unittest.TestCase):
