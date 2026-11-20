@@ -1,7 +1,7 @@
 name: sample CI
 on:
   push:
-    branches: main
+    branches: feature/payment
 permissions: 
   contents: read
 env:
