@@ -1,7 +1,5 @@
 name: sample CI
 on:
-  push:
-    branches: [main , "feature/**"]
   workflow_dispatch:
     inputs:
       deployment_target:
