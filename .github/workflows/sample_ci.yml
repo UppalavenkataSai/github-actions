@@ -13,7 +13,7 @@ jobs:
     steps:
       - run: echo "Checking $APP_NAME"
       - name: List app files
-        working-directory: .
+        working-directory: ...
         timeout-minutes: 2
         run: ls -la
   Success:
