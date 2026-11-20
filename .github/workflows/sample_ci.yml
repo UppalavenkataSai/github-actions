@@ -28,5 +28,5 @@ jobs:
     needs: checks
     runs-on: windows-latest
     steps:
-      - run: echo "This is pipeline is sucess"
+      - run: echo "This is pipeline is sucesses"
 
