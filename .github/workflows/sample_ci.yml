@@ -17,6 +17,7 @@ jobs:
         timeout-minutes: 2
         run: ls -la
   Success:
+    needs: checks
     runs-on: windows-latest
     steps:
       - run: echo "This is pipeline is sucess"
