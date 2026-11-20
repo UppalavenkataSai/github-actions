@@ -1,0 +1,16 @@
+name: sample CI
+on:
+  push:
+    branches: main
+
+permissions: 
+  contents: read
+
+env:
+  APP_NAME: demo-app
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Checking $APP_NAME"
