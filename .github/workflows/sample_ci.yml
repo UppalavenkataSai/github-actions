@@ -1,6 +1,6 @@
 name: sample CI
 on:
-  pull_request:
+  push:
     branches: main
 permissions: 
   contents: read
@@ -13,3 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Checking $APP_NAME"
+      - name: List app files
+        working-directory: ./app
+        timeout-minutes: 2
+        run: ls -la
+  Success:
+    runs-on: windows-latest
+    steps:
+      - run: echo "This is pipeline is sucess"
+
