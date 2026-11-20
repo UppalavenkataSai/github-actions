@@ -12,13 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Checking $APP_NAME"
-      - name: List app files
-        working-directory: ...
-        timeout-minutes: 2
-        run: ls -la
-      - name: Show diagnostic
-        if: failure()
-        run: echo "A previous step failed"
+      - name: Set variable
+        run: echo "APP_ENV=testing" >> "$GITHUB_ENV"
+      - name: Use variable
+        run: echo "$APP_ENV"
   Success:
     needs: checks
     runs-on: windows-latest
