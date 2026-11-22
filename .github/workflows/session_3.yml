@@ -55,4 +55,19 @@ jobs:
          echo "Runner OS: ${{ runner.os }}" # Runner lo use avutunna operating system peru
          echo "Build label: ${{ needs.prepare.outputs.labels }}" # Prepare job create chesina output ni ikkada access cheyyi
          echo "Python: ${{ matrix.python-version }}"
+         steps: # Steps list ikkada start avutundi
+     - name: Normal validation # Modati step
+       run: echo "Validation completed" # Validation kosam simple command run chestunnam
+     - name: Success path # Success condition ki example
+       if: ${{ success() }} # Mundu unna steps anni success ayithe ee step run avutundi
+       run: echo "Previous steps succeeded" # Success message chupistundi
+     - name: Failure handler # Failure condition ki example
+       if: ${{ failure() }} # Mundu unna step fail ayithe ee step run avutundi
+       run: echo "A previous step failed" # Failure details chupinchadaniki leda notification pampadaniki use cheyyachu
+     - name: Final summary attempt # Final summary kosam step
+       if: ${{ always() }} # Mundu steps result ela unna ee step run avvadaniki try chestundi
+       run: echo "Attempt final summary" # Final summary action ikkada run avutundi
+     - name: Cancellation handler # Workflow cancel ayinappudu use chese example
+       if: ${{ cancelled() }} # Workflow cancel ayithe ee condition true avutundi
+       run: echo "Workflow was cancelled" 
     
