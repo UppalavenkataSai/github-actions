@@ -35,4 +35,11 @@ jobs:
       - name: create output
         id: meta
         run: echo "label=build-${{ github.run_number }}" >> "GITHUB_OUTPUT"
+
+ 
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ needs.prepare.outputs.labels }}"
     
