@@ -16,7 +16,7 @@ jobs:
       - name: use Repository variable
         env:
           DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
-        run: echo " Region: $DEPLOY_REGION " 
+        run: 'echo " Region: $DEPLOY_REGION "' 
       - name: check secret safely
         env:
           API_TOKEN: $ {{ secrets.DEMO_API_TOKEN }}
