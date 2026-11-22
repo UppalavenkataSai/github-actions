@@ -7,4 +7,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Branch ${{ github.ref_name }}"
+      - run: |
+          echo "Event ${{ github.actor }}"
+          echo "user ${{ github.actor }}"
+          echo "job ${{ github.job }}"
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo " Main branch is Detected "
     
