@@ -6,29 +6,30 @@ on:
     branches: ['main', 'feature/payment']
 
 jobs:
+
   session_3_pipeline:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Display branch
-        run: echo "Branch ${{ github.ref_name }}"
+      - name: Display Branch
+        run: echo "Branch: ${{ github.ref_name }}"
 
-      - name: Display GitHub contexts
+      - name: Display Context Values
         run: |
           echo "Event: ${{ github.event_name }}"
           echo "Actor: ${{ github.actor }}"
           echo "Job: ${{ github.job }}"
 
-      - name: Check main branch
+      - name: Check Main Branch
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo "Main branch is detected"
 
-      - name: Use Repository variable
+      - name: Use Repository Variable
         env:
           DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
         run: echo "Region: $DEPLOY_REGION"
 
-      - name: Check secret safely
+      - name: Check Secret Safely
         env:
           API_TOKEN: ${{ secrets.DEMO_API_TOKEN }}
         run: |
@@ -46,7 +47,7 @@ jobs:
       labels: ${{ steps.meta.outputs.label }}
 
     steps:
-      - name: Create output
+      - name: Create Output
         id: meta
         run: echo "label=build-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
@@ -55,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Display build label
+      - name: Display Build Output
         run: echo "${{ needs.prepare.outputs.labels }}"
 
   test:
@@ -67,27 +68,32 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
 
     steps:
-      - name: Display context values
+      - name: Display Context Values
         run: |
           echo "Runner OS: ${{ runner.os }}"
           echo "Build label: ${{ needs.prepare.outputs.labels }}"
           echo "Python: ${{ matrix.python-version }}"
 
-      - name: Normal validation
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Normal Validation
         run: echo "Validation completed"
 
-      - name: Success path
+      - name: Success Path
         if: ${{ success() }}
         run: echo "Previous steps succeeded"
 
-      - name: Failure handler
+      - name: Failure Handler
         if: ${{ failure() }}
         run: echo "A previous step failed"
 
-      - name: Final summary attempt
+      - name: Final Summary Attempt
         if: ${{ always() }}
         run: echo "Attempt final summary"
 
-      - name: Cancellation handler
+      - name: Cancellation Handler
         if: ${{ cancelled() }}
         run: echo "Workflow was cancelled"
