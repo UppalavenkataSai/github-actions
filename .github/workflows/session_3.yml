@@ -21,7 +21,7 @@ jobs:
         env:
           API_TOKEN: $ {{ secrets.DEMO_API_TOKEN }}
         run: |
-          if [ -n "$API token is configured"]: then
+          if [ -n "$API_TOKEN is configured"]: then
             echo "API token is configured"
           else
             echo "API token is not configured"
