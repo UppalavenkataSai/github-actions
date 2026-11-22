@@ -11,6 +11,6 @@ jobs:
           echo "Event ${{ github.actor }}"
           echo "user ${{ github.actor }}"
           echo "job ${{ github.job }}"
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo " Main branch is Detected "
+      - if: ${{ github.ref == 'refs/heads/feature/**' }}
+        run: echo " feature branch is Detected "
     
