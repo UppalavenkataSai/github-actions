@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: create output
         id: meta
-        run: echo "label=build-${{ github.run_number }}" >> "GITHUB_OUTPUT"
+        run: echo "label=build-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
  
   build:
@@ -43,4 +43,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "${{ needs.prepare.outputs.labels }}"
+  test: 
+    needs: prepare # Prepare job complete ayyaka matrame ee job start avvali
+    runs-on: ubuntu-latest # Ubuntu runner
+    strategy: # Job ela execute avvalo strategy define chestunnam
+      matrix: # Different configurations kosam multiple runs create cheyyi
+        python-version: ['3.10', '3.11', '3.12'] # Ee 3 versions kosam separate ga 3 job runs create cheyyi
+    steps: # test job steps
+     - name: Display context values # Context details ni display cheyyi
+       run: | # Multiple shell commands run cheyyadaniki
+         echo "Runner OS: ${{ runner.os }}" # Runner lo use avutunna operating system peru
+         echo "Build label: ${{ needs.prepare.outputs.labels }}" # Prepare job create chesina output ni ikkada access cheyyi
+         echo "Python: ${{ matrix.python-version }}"
     
