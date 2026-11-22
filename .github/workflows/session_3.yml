@@ -1,23 +1,34 @@
+
 name: Session 3
+
 on:
   push:
     branches: ['main', 'feature/payment']
-jobs: 
+
+jobs:
   session_3_pipeline:
     runs-on: ubuntu-22.04
+
     steps:
-      - run: echo "Branch ${{ github.ref_name }}"
-      - run: |
-          echo "Event ${{ github.actor }}"
-          echo "user ${{ github.actor }}"
-          echo "job ${{ github.job }}"
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo " main branch is Detected "
-      - name: use Repository variable
+      - name: Display branch
+        run: echo "Branch ${{ github.ref_name }}"
+
+      - name: Display GitHub contexts
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Job: ${{ github.job }}"
+
+      - name: Check main branch
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo "Main branch is detected"
+
+      - name: Use Repository variable
         env:
           DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
-        run: 'echo " Region: $DEPLOY_REGION "' 
-      - name: check secret safely
+        run: echo "Region: $DEPLOY_REGION"
+
+      - name: Check secret safely
         env:
           API_TOKEN: ${{ secrets.DEMO_API_TOKEN }}
         run: |
@@ -30,44 +41,53 @@ jobs:
   prepare:
     needs: session_3_pipeline
     runs-on: ubuntu-latest
+
     outputs:
       labels: ${{ steps.meta.outputs.label }}
+
     steps:
-      - name: create output
+      - name: Create output
         id: meta
         run: echo "label=build-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
- 
   build:
     needs: prepare
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "${{ needs.prepare.outputs.labels }}"
-  test: 
-    needs: prepare # Prepare job complete ayyaka matrame ee job start avvali
-    runs-on: ubuntu-latest # Ubuntu runner
-    strategy: # Job ela execute avvalo strategy define chestunnam
-      matrix: # Different configurations kosam multiple runs create cheyyi
-        python-version: ['3.10', '3.11', '3.12'] # Ee 3 versions kosam separate ga 3 job runs create cheyyi
-    steps: # test job steps
-     - name: Display context values # Context details ni display cheyyi
-       run: | # Multiple shell commands run cheyyadaniki
-         echo "Runner OS: ${{ runner.os }}" # Runner lo use avutunna operating system peru
-         echo "Build label: ${{ needs.prepare.outputs.labels }}" # Prepare job create chesina output ni ikkada access cheyyi
-         echo "Python: ${{ matrix.python-version }}"
-         steps: # Steps list ikkada start avutundi
-     - name: Normal validation # Modati step
-       run: echo "Validation completed" # Validation kosam simple command run chestunnam
-     - name: Success path # Success condition ki example
-       if: ${{ success() }} # Mundu unna steps anni success ayithe ee step run avutundi
-       run: echo "Previous steps succeeded" # Success message chupistundi
-     - name: Failure handler # Failure condition ki example
-       if: ${{ failure() }} # Mundu unna step fail ayithe ee step run avutundi
-       run: echo "A previous step failed" # Failure details chupinchadaniki leda notification pampadaniki use cheyyachu
-     - name: Final summary attempt # Final summary kosam step
-       if: ${{ always() }} # Mundu steps result ela unna ee step run avvadaniki try chestundi
-       run: echo "Attempt final summary" # Final summary action ikkada run avutundi
-     - name: Cancellation handler # Workflow cancel ayinappudu use chese example
-       if: ${{ cancelled() }} # Workflow cancel ayithe ee condition true avutundi
-       run: echo "Workflow was cancelled" 
-    
+      - name: Display build label
+        run: echo "${{ needs.prepare.outputs.labels }}"
+
+  test:
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Display context values
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Build label: ${{ needs.prepare.outputs.labels }}"
+          echo "Python: ${{ matrix.python-version }}"
+
+      - name: Normal validation
+        run: echo "Validation completed"
+
+      - name: Success path
+        if: ${{ success() }}
+        run: echo "Previous steps succeeded"
+
+      - name: Failure handler
+        if: ${{ failure() }}
+        run: echo "A previous step failed"
+
+      - name: Final summary attempt
+        if: ${{ always() }}
+        run: echo "Attempt final summary"
+
+      - name: Cancellation handler
+        if: ${{ cancelled() }}
+        run: echo "Workflow was cancelled"
