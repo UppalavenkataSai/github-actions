@@ -27,7 +27,6 @@ jobs:
             echo "API token is not configured"
           fi
 
-jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
