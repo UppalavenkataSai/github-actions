@@ -26,3 +26,14 @@ jobs:
           else
             echo "API token is not configured"
           fi
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      labels: ${{ steps.meta,out.lable }}
+    stpes:
+      - name: create output
+        id: meta
+        run: echo "label=build-${{GITHUB_RUN_NUMBER}}" >> "GITHUB_OUTPUT"
+    
