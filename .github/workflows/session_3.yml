@@ -1,0 +1,10 @@
+name: Session 3
+on:
+  push:
+    branches: ['main', 'feature/payment']
+jobs: 
+  session_3_pipeline:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Branch ${{ github.ref_name }}"
+    
