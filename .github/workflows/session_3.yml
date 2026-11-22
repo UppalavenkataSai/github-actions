@@ -3,10 +3,13 @@ name: Session 3
 
 on:
   push:
-    branches: ['main', 'feature/payment']
+    branches:
+      - main
+      - feature/payment
 
 jobs:
 
+  # JOB 1: GitHub Contexts, Variables and Secrets
   session_3_pipeline:
     runs-on: ubuntu-22.04
 
@@ -39,6 +42,7 @@ jobs:
             echo "API token is not configured"
           fi
 
+  # JOB 2: Create Job Output
   prepare:
     needs: session_3_pipeline
     runs-on: ubuntu-latest
@@ -51,28 +55,34 @@ jobs:
         id: meta
         run: echo "label=build-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
+  # JOB 3: Access Output from Prepare Job
   build:
     needs: prepare
     runs-on: ubuntu-latest
 
     steps:
       - name: Display Build Output
-        run: echo "${{ needs.prepare.outputs.labels }}"
+        run: echo "Build Label: ${{ needs.prepare.outputs.labels }}"
 
+  # JOB 4: Matrix Strategy and Status Check Functions
   test:
     needs: prepare
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version:
+          - '3.10'
+          - '3.11'
+          - '3.12'
 
     steps:
       - name: Display Context Values
         run: |
           echo "Runner OS: ${{ runner.os }}"
           echo "Build label: ${{ needs.prepare.outputs.labels }}"
-          echo "Python: ${{ matrix.python-version }}"
+          echo "Python version: ${{ matrix.python-version }}"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -90,7 +100,7 @@ jobs:
         if: ${{ failure() }}
         run: echo "A previous step failed"
 
-      - name: Final Summary Attempt
+      - name: Final Summary
         if: ${{ always() }}
         run: echo "Attempt final summary"
 
