@@ -28,6 +28,7 @@ jobs:
           fi
 
   prepare:
+    needs: session_3_pipeline
     runs-on: ubuntu-latest
     outputs:
       labels: ${{ steps.meta.outputs.label }}
