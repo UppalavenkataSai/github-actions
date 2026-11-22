@@ -13,4 +13,16 @@ jobs:
           echo "job ${{ github.job }}"
       - if: ${{ github.ref == 'refs/heads/feature/**' }}
         run: echo " feature branch is Detected "
-    
+      - name: use Repository variable
+        env:
+          DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
+        run: echo " Region: $DEPLOY_REGION " 
+      - name: check secret safely
+        env:
+          API_TOKEN: $ {{ secrets.DEMO_API_TOKEN }}
+        run: |
+          if [ -n "$API token is configured"]: then
+            echo "API token is configured"
+          else
+            echo "API token is not configured"
+          fi
