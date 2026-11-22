@@ -34,7 +34,7 @@ jobs:
       - name: Use Repository Variable
         env:
           DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
-        run: echo "Region: $DEPLOY_REGION"
+        run: 'echo "Region: $DEPLOY_REGION"'
 
       - name: Check Secret Safely
         env:
@@ -68,7 +68,7 @@ jobs:
       - name: Display Build Output
         env:
           BUILD_LABEL: ${{ needs.prepare.outputs.label }}
-        run: echo "Build Label: $BUILD_LABEL"
+        run: 'echo "Build Label: $BUILD_LABEL"'
 
   # JOB 4: Matrix Strategy and Status Check Functions
   test:
