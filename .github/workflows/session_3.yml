@@ -21,7 +21,7 @@ jobs:
         env:
           API_TOKEN: ${{ secrets.DEMO_API_TOKEN }}
         run: |
-          if [ -n "$API_TOKEN"]; then
+          if [ -n "$API_TOKEN" ]; then
             echo "API token is configured"
           else
             echo "API token is not configured"
@@ -30,9 +30,9 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      labels: ${{ steps.meta,out.lable }}
-    stpes:
+      labels: ${{ steps.meta.outputs.label }}
+    steps:
       - name: create output
         id: meta
-        run: echo "label=build-${{GITHUB_RUN_NUMBER}}" >> "GITHUB_OUTPUT"
+        run: echo "label=build-${{ github.run_number }}" >> "GITHUB_OUTPUT"
     
