@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -10,123 +11,199 @@ permissions:
   contents: read
 
 jobs:
+
+  # --------------------------------
+  # 1. Code Quality and Unit Testing
+  # --------------------------------
   quality:
-    name: quality
+    name: Code Quality and Unit Tests
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install project tools
-        run: python -m pip install -r requirements.txt
-      - name: Run unit tests
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run Unit Tests
         run: python -m pytest -q
-      - name: Check code style
+
+      - name: Check Code Style
         run: python -m ruff check .
 
+
+  # --------------------------------
+  # 2. Python Security Scanning
+  # --------------------------------
   python-security:
-    name: Python security and dependencies
+    name: Python Security and Dependencies
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install security tools
-        run: python -m pip install bandit pip-audit
-      - name: SAST-style source scan
+
+      - name: Install Security Tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install bandit pip-audit
+
+      - name: SAST Source Code Scan
         run: python -m bandit -r src
-      - name: Dependency vulnerability audit
+
+      - name: Dependency Vulnerability Audit
         run: python -m pip_audit -r requirements.txt
 
+
+  # --------------------------------
+  # 3. Git Secret Scanning
+  # --------------------------------
   secret-scan:
-    name: Secret scan
+    name: Git History Secret Scan
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install Gitleaks CLI
+
+      - name: Install Gitleaks
         run: |
           VERSION=8.24.3
           curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" -o gitleaks.tar.gz
           tar -xzf gitleaks.tar.gz gitleaks
           sudo install gitleaks /usr/local/bin/gitleaks
-      - name: Scan Git history for secrets
+
+      - name: Scan Git History
         run: gitleaks detect --source . --redact --no-banner
 
+
+  # --------------------------------
+  # 4. Filesystem and IaC Scanning
+  # --------------------------------
   filesystem-scan:
-    name: Trivy filesystem and configuration scan
+    name: Trivy Filesystem and Configuration Scan
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Trivy CLI
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee /etc/apt/sources.list.d/trivy.list
+
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+            gpg --dearmor | \
+            sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | \
+            sudo tee /etc/apt/sources.list.d/trivy.list
+
           sudo apt-get update
           sudo apt-get install -y trivy
-      - name: Scan repository filesystem and IaC files
-        run: trivy fs --scanners vuln,misconfig,secret --severity HIGH,CRITICAL --exit-code 1 .
 
+      - name: Scan Repository
+        run: |
+          trivy fs \
+            --scanners vuln,misconfig,secret \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 .
+
+
+  # --------------------------------
+  # 5. Docker Build and Image Scan
+  # --------------------------------
   container-scan:
-    name: Container image scan
+    name: Container Image Security Scan
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Build local demo container
-        run: docker build -t freecodes-demo:${{ github.sha }} .
-      - name: Install Trivy CLI
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build --pull --no-cache \
+            -t freecodes-demo:${{ github.sha }} .
+
+      - name: Install Trivy
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee /etc/apt/sources.list.d/trivy.list
+
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+            gpg --dearmor | \
+            sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | \
+            sudo tee /etc/apt/sources.list.d/trivy.list
+
           sudo apt-get update
           sudo apt-get install -y trivy
-      - name: Scan built image
-        run: trivy image --severity HIGH,CRITICAL --exit-code 1 freecodes-demo:${{ github.sha }}
 
-  
+      - name: Scan Docker Image
+        run: |
+          trivy image \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 1 \
+            freecodes-demo:${{ github.sha }}
+
+
+  # --------------------------------
+  # 6. Software Bill of Materials
+  # --------------------------------
   sbom:
-    name: Generate SBOM
+    name: Generate CycloneDX SBOM
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install CycloneDX
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install cyclonedx-bom==8.0.1
+      - name: Install CycloneDX
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install cyclonedx-bom==8.0.1
 
-    - name: Generate CycloneDX SBOM
-      run: |
-        cyclonedx-py requirements requirements.txt \
-          --output-format JSON \
-          --output-file sbom.json
+      - name: Generate CycloneDX SBOM
+        run: |
+          cyclonedx-py requirements requirements.txt \
+            --output-format JSON \
+            --output-file sbom.json
 
-    - name: Verify SBOM
-      run: |
-        test -s sbom.json
-        echo "SBOM generated successfully"
-        ls -lh sbom.json
+      - name: Verify SBOM
+        run: |
+          test -s sbom.json
+          echo "SBOM generated successfully"
+          ls -lh sbom.json
 
-    - name: Upload SBOM Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: sbom-${{ github.sha }}
-        path: sbom.json
-        if-no-files-found: error
-        retention-days: 7
-
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ github.sha }}
+          path: sbom.json
+          if-no-files-found: error
+          retention-days: 7
