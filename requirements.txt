@@ -1,8 +1,14 @@
+
+# Testing tools
 pytest==9.0.3
+
+# Intentionally vulnerable dependencies
 lxml==6.0.4
+requests==2.25.1
+urllib3==1.26.3
+
+# Code quality and security tools
 ruff==0.11.2
 bandit==1.8.3
 pip-audit==2.10.1
 cyclonedx-bom==8.0.1
-requests==2.25.1
-urllib3==1.26.3
