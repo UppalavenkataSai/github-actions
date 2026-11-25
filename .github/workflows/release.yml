@@ -1,10 +1,11 @@
+
 name: Free Controlled Release
 
 on:
   workflow_dispatch:
     inputs:
       target:
-        description: "Choose where to promote the tested package"
+        description: "Choose the deployment target"
         required: true
         type: choice
         options:
@@ -13,32 +14,58 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   validate:
+    name: Validate Deployment Target
     runs-on: ubuntu-latest
+
     steps:
-      - name: Validate target on the runner
+      - name: Validate target
         env:
           TARGET: ${{ inputs.target }}
+        shell: bash
         run: |
-          if [ "$TARGET" != "staging" ] && [ "$TARGET" != "production" ]; then
-            echo "Unsupported target"
-            exit 1
-          fi
-          echo "Valid target: $TARGET"
+          set -euo pipefail
+
+          case "$TARGET" in
+            staging|production)
+              echo "Valid deployment target: $TARGET"
+              ;;
+            *)
+              echo "Unsupported deployment target: $TARGET"
+              exit 1
+              ;;
+          esac
 
   package:
+    name: Build Release Package
     needs: validate
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Create one release package
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Release Package
+        shell: bash
         run: |
+          set -euo pipefail
+
           mkdir -p release
-          tar -czf release/application.tar.gz src Dockerfile
-          sha256sum release/application.tar.gz > release/application.tar.gz.sha256
-      - name: Upload package
+
+          tar -czf release/application.tar.gz \
+            src \
+            Dockerfile
+
+          cd release
+          sha256sum application.tar.gz > application.tar.gz.sha256
+
+          echo "Release package created:"
+          ls -lh
+
+      - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-${{ github.sha }}
@@ -47,57 +74,117 @@ jobs:
           retention-days: 7
 
   staging:
+    name: Deploy to Staging
     needs: package
-    if: ${{ inputs.target == 'staging' || inputs.target == 'production' }}
     runs-on: ubuntu-latest
+
     environment:
       name: staging
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download Release Artifact
+        uses: actions/download-artifact@v4
         with:
           name: app-${{ github.sha }}
           path: release
-      - name: Verify package checksum
-        run: cd release && sha256sum -c application.tar.gz.sha256
-      - name: Show whether staging settings exist (values are never printed)
+
+      - name: Verify Package Checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release
+          sha256sum -c application.tar.gz.sha256
+
+      - name: Check Staging Configuration
         env:
           REGION: ${{ vars.DEPLOY_REGION }}
           TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        shell: bash
         run: |
-          [ -n "$REGION" ] && echo "DEPLOY_REGION is configured" || echo "DEPLOY_REGION is not configured"
-          [ -n "$TOKEN" ] && echo "DEPLOY_TOKEN is configured" || echo "DEPLOY_TOKEN is not configured"
-      - name: Staging deployment placeholder
-        run: echo "Demo only: deploy this exact package to STAGING here."
-      - name: Staging smoke-test placeholder
-        run: echo "Demo only: run your staging health endpoint check here."
+          set -euo pipefail
+
+          if [ -z "$REGION" ]; then
+            echo "DEPLOY_REGION is missing"
+            exit 1
+          fi
+
+          if [ -z "$TOKEN" ]; then
+            echo "DEPLOY_TOKEN is missing"
+            exit 1
+          fi
+
+          echo "Staging configuration is available"
+
+      - name: Deploy to Staging
+        run: |
+          echo "Demo placeholder: Deploy application.tar.gz to STAGING"
+          # Add your actual staging deployment commands here.
+
+      - name: Staging Smoke Test
+        run: |
+          echo "Demo placeholder: Run staging health checks"
+          # Add your actual staging health check here.
 
   production:
+    name: Deploy to Production
     needs: staging
     if: ${{ inputs.target == 'production' }}
     runs-on: ubuntu-latest
+
     environment:
       name: production
+
     concurrency:
       group: production-deployment
       cancel-in-progress: false
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download Same Release Artifact
+        uses: actions/download-artifact@v4
         with:
           name: app-${{ github.sha }}
           path: release
-      - name: Verify the same package checksum
-        run: cd release && sha256sum -c application.tar.gz.sha256
-      - name: Show whether production settings exist (values are never printed)
+
+      - name: Verify Package Checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release
+          sha256sum -c application.tar.gz.sha256
+
+      - name: Check Production Configuration
         env:
           REGION: ${{ vars.DEPLOY_REGION }}
           TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        shell: bash
         run: |
-          [ -n "$REGION" ] && echo "DEPLOY_REGION is configured" || echo "DEPLOY_REGION is not configured"
-          [ -n "$TOKEN" ] && echo "DEPLOY_TOKEN is configured" || echo "DEPLOY_TOKEN is not configured"
-      - name: Production deployment placeholder
-        run: echo "Demo only: deploy the same package to PRODUCTION here."
-      - name: Production smoke-test placeholder
-        run: echo "Demo only: run production health check here."
-      - name: Rollback guidance
+          set -euo pipefail
+
+          if [ -z "$REGION" ]; then
+            echo "DEPLOY_REGION is missing"
+            exit 1
+          fi
+
+          if [ -z "$TOKEN" ]; then
+            echo "DEPLOY_TOKEN is missing"
+            exit 1
+          fi
+
+          echo "Production configuration is available"
+
+      - name: Deploy to Production
+        run: |
+          echo "Demo placeholder: Deploy the same package to PRODUCTION"
+          # Add your actual production deployment commands here.
+
+      - name: Production Smoke Test
+        run: |
+          echo "Demo placeholder: Run production health checks"
+          # Add your actual production health check here.
+
+      - name: Rollback Guidance
         if: failure()
-        run: echo "Deployment failed: follow your rollback runbook and redeploy the previous known-good artifact."
+        run: |
+          echo "Production deployment failed."
+          echo "Follow the rollback runbook."
+          echo "Redeploy the previous known-good release."
